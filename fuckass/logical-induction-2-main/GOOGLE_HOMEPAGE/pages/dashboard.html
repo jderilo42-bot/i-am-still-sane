@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; }
+        .container { max-width: 500px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 32px; }
+        h2 { text-align: center; color: #333; }
+        .account-list { margin-top: 24px; }
+        .account-item { background: #f9fafb; border: 1px solid #e0e0e0; border-radius: 6px; padding: 16px; margin-bottom: 12px; }
+        .account-item strong { color: #1976d2; }
+        .no-accounts { color: #888; text-align: center; margin-top: 32px; }
+        .btn { display: block; width: 100%; padding: 12px; background: #1976d2; color: #fff; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 24px; }
+        .btn:hover { background: #1565c0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Account Dashboard</h2>
+        <div id="accounts" class="account-list"></div>
+        <button class="btn" onclick="window.location.href='registration.html'">Create New Account</button>
+    </div>
+    <script>
+        // Fetch accounts from localStorage
+        function getAccounts() {
+            return JSON.parse(localStorage.getItem('accounts') || '[]');
+        }
+
+        function renderAccounts() {
+            const accounts = getAccounts();
+            const accountsDiv = document.getElementById('accounts');
+            accountsDiv.innerHTML = '';
+
+            if (accounts.length === 0) {
+                accountsDiv.innerHTML = '<div class="no-accounts">No accounts created yet.</div>';
+                return;
+            }
+
+            accounts.forEach((acc, idx) => {
+                accountsDiv.innerHTML += `
+                    <div class="account-item">
+                        <div><strong>Username:</strong> ${acc.username}</div>
+                        <div><strong>Email:</strong> ${acc.email}</div>
+                    </div>
+                `;
+            });
+        }
+
+        renderAccounts();
+    </script>
+</body>
+</html>

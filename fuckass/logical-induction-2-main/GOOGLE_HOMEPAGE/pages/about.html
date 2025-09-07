@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Page</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(to bottom, #1a0033, #4b0082);
+            color: yellow;
+            font-family: "Press Start 2P", monospace;
+            text-align: center;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1, h2, p {
+            position: relative;
+            z-index: 2;
+        }
+
+        button {
+            font-family: inherit;
+            font-size: 12px;
+            padding: 10px 20px;
+            border: 3px solid yellow;
+            border-radius: 0;
+            background: black;
+            color: yellow;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 3px 3px 0px #333;
+        }
+
+        button:hover {
+            background: yellow;
+            color: black;
+            box-shadow: 3px 3px 0px #111;
+        }
+
+        .stars {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(white 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: star-move 20s linear infinite, twinkle 3s infinite alternate;
+            z-index: 1;
+        }
+
+        @keyframes star-move {
+            from { background-position: 0 0; }
+            to { background-position: -1000px 0; }
+        }
+
+        @keyframes twinkle {
+            from { opacity: 1; }
+            to { opacity: 0.7; }
+        }
+
+        @keyframes ship-pass {
+            0% { left: -200px; }
+            100% { left: calc(100% + 200px); }
+        }
+
+        .ship-animate {
+            animation: ship-pass 5s linear forwards;
+        }
+
+        #ship {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-image: url('../images/spaceship removed backround.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            transform: rotate(90deg);
+            z-index: 3;
+            display: none;
+            top: 50%;
+        }
+
+        .fade-box {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.7s ease-in;
+            background: yellow;
+            color: black;
+            padding: 20px;
+            border: 4px solid black;
+            box-shadow: 4px 4px 0px #333;
+            margin-bottom: 60px;
+            z-index: 2;
+        }
+
+        .fade-box.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .fade-text {
+            white-space: pre-wrap;
+        }
+
+        #prompts {
+            position: absolute;
+            bottom: 20px;
+            text-align: center;
+            z-index: 2;
+            font-size: 12px;
+        }
+
+        #space-prompt {
+            margin-bottom: 5px;
+        }
+
+        #back-to-start {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 2;
+        }
+
+        /* Answer box style */
+        #answer1 {
+            margin-top: 20px;
+            background: #222;
+            color: yellow;
+            border: 2px solid yellow;
+            box-shadow: 3px 3px 0px #111;
+            padding: 10px;
+        }
+
+        /* POGI POINTS counter with image */
+        #points-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 14px;
+            background: black;
+            border: 2px solid yellow;
+            padding: 8px 12px;
+            box-shadow: 3px 3px 0px #111;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+        }
+
+        #points-counter img {
+            height: 30px;
+            width: auto;
+            margin-right: 8px;
+        }
+
+        #result-message {
+            margin-top: 10px;
+            font-size: 12px;
+            color: lime;
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <div id="ship"></div>
+
+    <div id="points-counter">
+      <img id="coin-image" src="../images/POGI POINTS V3.png" alt="Pogi Coin">
+      <span id="points-text">POGI POINTS: 0</span>
+    </div>
+
+    <!-- Popup container for pogi points image -->
+    <div id="popup-container" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; z-index: 10;">
+      <img id="popup-image" src="../images/POGI POINTS V3.png" alt="Pogi Points Popup" style="width: 300px; height: auto; border: 4px solid yellow; border-radius: 10px; box-shadow: 0 0 20px yellow; transition: top 2s ease-out, left 2s ease-out, opacity 2s ease-out; opacity: 1;">
+    </div>
+
+    <h1 id="intro-text"></h1>
+
+    <div id="rules" class="fade-box">
+        <h2>RULES</h2>
+        <p id="rules-text" class="fade-text"></p>
+    </div>
+
+    <div id="ready" class="fade-box">
+        <h2 id="ready-text" class="fade-text"></h2>
+    </div>
+
+    <div id="question1" class="fade-box">
+        <h2>QUESTION 1</h2>
+        <p id="question1-text" class="fade-text"></p>
+
+        <div id="answer1" class="fade-box">
+            <h3>Answer</h3>
+            <p id="answer1-text" class="fade-text">[Placeholder Answer]</p>
+            <p id="result-message"></p>
+        </div>
+    </div>
+
+    <div id="back-to-start">
+        <a href="../index.html">
+            <button>BACK TO START</button>
+        </a>
+    </div>
+
+    <div id="prompts">
+        <div id="space-prompt">PRESS SPACE TO CONTINUE</div>
+        <div id="back-prompt">PRESS BACKSPACE TO GO BACK</div>
+        <div id="answer-prompt">PRESS A (CORRECT) / B (WRONG)</div>
+    </div>
+
+    <script>
+        const introText = "HERE ARE THE RULES!";
+        const rulesText = "1. NO AI\n2. NO CHEATING\n3. YOU MAY CALL A FRIEND";
+        const readyText = "ARE YOU READY?";
+        const question1Text = "Solve this logical puzzle:\n[Placeholder for actual question]";
+        const answer1Text = "[Placeholder Answer]";
+
+        let introIndex = introText.length;
+        let rulesIndex = 0;
+        let readyIndex = 0;
+        let question1Index = 0;
+        let answer1Index = 0;
+        let isTyping = false;
+        let isErasing = false;
+        let currentStage = 0; // 0=intro,1=rules,2=ready,3=question1,4=answer1
+
+        let pogiPoints = 0;
+
+        document.getElementById('intro-text').innerText = introText;
+
+        function updatePoints() {
+          document.getElementById('points-text').innerText = "POGI POINTS: " + pogiPoints;
+        }
+
+        function eraseIntro(forward = true) {
+            if (introIndex > 0) {
+                document.getElementById('intro-text').innerText = introText.substring(0, introIndex - 1);
+                introIndex--;
+                setTimeout(() => eraseIntro(forward), forward ? 25 : 15);
+            } else {
+                isErasing = false;
+                if (forward) {
+                    currentStage = 1;
+                    document.getElementById('rules').classList.add('show');
+                    isTyping = true;
+                    typeRules();
+                }
+            }
+        }
+
+        function typeRules() {
+            if (rulesIndex < rulesText.length) {
+                document.getElementById('rules-text').innerText += rulesText.charAt(rulesIndex);
+                rulesIndex++;
+                setTimeout(typeRules, 40);
+            } else {
+                isTyping = false;
+            }
+        }
+
+        function eraseRules(forward = true) {
+            if (rulesIndex > 0) {
+                document.getElementById('rules-text').innerText = rulesText.substring(0, rulesIndex - 1);
+                rulesIndex--;
+                setTimeout(() => eraseRules(forward), forward ? 20 : 12);
+            } else {
+                isErasing = false;
+                document.getElementById('rules').classList.remove('show');
+                if (forward) {
+                    const ship = document.getElementById('ship');
+                    ship.style.display = 'block';
+                    ship.classList.add('ship-animate');
+                    ship.addEventListener('animationend', () => {
+                        ship.classList.remove('ship-animate');
+                        ship.style.display = 'none';
+                        currentStage = 2;
+                        document.getElementById('ready').classList.add('show');
+                        isTyping = true;
+                        typeReady();
+                    }, { once: true });
+                } else {
+                    currentStage = 0;
+                    introIndex = introText.length;
+                    document.getElementById('intro-text').innerText = introText;
+                }
+            }
+        }
+
+        function typeReady() {
+            if (readyIndex < readyText.length) {
+                document.getElementById('ready-text').innerText += readyText.charAt(readyIndex);
+                readyIndex++;
+                setTimeout(typeReady, 40);
+            } else {
+                isTyping = false;
+            }
+        }
+
+        function eraseReady(forward = true) {
+            if (readyIndex > 0) {
+                document.getElementById('ready-text').innerText = readyText.substring(0, readyIndex - 1);
+                readyIndex--;
+                setTimeout(() => eraseReady(forward), forward ? 20 : 12);
+            } else {
+                isErasing = false;
+                document.getElementById('ready').classList.remove('show');
+                if (forward) {
+                    currentStage = 3;
+                    document.getElementById('question1').classList.add('show');
+                    isTyping = true;
+                    typeQuestion1();
+                } else {
+                    currentStage = 1;
+                    rulesIndex = 0;
+                    document.getElementById('rules-text').innerText = "";
+                    document.getElementById('rules').classList.add('show');
+                    isTyping = true;
+                    typeRules();
+                }
+            }
+        }
+
+        function typeQuestion1() {
+            if (question1Index < question1Text.length) {
+                document.getElementById('question1-text').innerText += question1Text.charAt(question1Index);
+                question1Index++;
+                setTimeout(typeQuestion1, 40);
+            } else {
+                isTyping = false;
+            }
+        }
+
+        function typeAnswer1() {
+            if (answer1Index < answer1Text.length) {
+                document.getElementById('answer1-text').innerText += answer1Text.charAt(answer1Index);
+                answer1Index++;
+                setTimeout(typeAnswer1, 35);
+            } else {
+                isTyping = false;
+            }
+        }
+
+        function eraseQuestion1(forward = true) {
+            if (question1Index > 0) {
+                document.getElementById('question1-text').innerText = question1Text.substring(0, question1Index - 1);
+                question1Index--;
+                setTimeout(() => eraseQuestion1(forward), forward ? 20 : 12);
+            } else {
+                isErasing = false;
+                document.getElementById('question1').classList.remove('show');
+                document.getElementById('answer1').classList.remove('show');
+                document.getElementById('answer1-text').innerText = "";
+                document.getElementById('result-message').innerText = "";
+                answer1Index = 0;
+                if (!forward) {
+                    currentStage = 2;
+                    readyIndex = 0;
+                    document.getElementById('ready-text').innerText = "";
+                    document.getElementById('ready').classList.add('show');
+                    isTyping = true;
+                    typeReady();
+                }
+            }
+        }
+
+        function eraseAnswer1(forward = true) {
+            if (answer1Index > 0) {
+                document.getElementById('answer1-text').innerText = answer1Text.substring(0, answer1Index - 1);
+                answer1Index--;
+                setTimeout(() => eraseAnswer1(forward), forward ? 20 : 12);
+            } else {
+                isErasing = false;
+                document.getElementById('answer1').classList.remove('show');
+                document.getElementById('answer1-text').innerText = "";
+                document.getElementById('result-message').innerText = "";
+                if (!forward) {
+                    currentStage = 3;
+                }
+            }
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (!isTyping && !isErasing) {
+                if (event.code === "Space") {
+                    if (currentStage === 0) {
+                        isErasing = true;
+                        eraseIntro(true);
+                    } else if (currentStage === 1) {
+                        isErasing = true;
+                        eraseRules(true);
+                    } else if (currentStage === 2) {
+                        isErasing = true;
+                        eraseReady(true);
+                    } else if (currentStage === 3) {
+                        currentStage = 4;
+                        document.getElementById('answer1-text').innerText = "";
+                        document.getElementById('result-message').innerText = "";
+                        answer1Index = 0;
+                        document.getElementById('answer1').classList.add('show');
+                        isTyping = true;
+                        typeAnswer1();
+                    }
+                } else if (event.code === "Backspace") {
+                    if (currentStage === 1) {
+                        isErasing = true;
+                        eraseRules(false);
+                    } else if (currentStage === 2) {
+                        isErasing = true;
+                        eraseReady(false);
+                    } else if (currentStage === 3) {
+                        isErasing = true;
+                        eraseQuestion1(false);
+                    } else if (currentStage === 4) {
+                        isErasing = true;
+                        eraseAnswer1(false);
+                    }
+                } else if (currentStage === 4) {
+                    if (event.code === "KeyA") { // Correct answer
+                        pogiPoints++;
+                        updatePoints();
+                        document.getElementById('result-message').innerHTML = "+1 POGI POINT! <img src='../images/POGI POINTS V3.png' style='height:30px; vertical-align:middle;'>";
+                        // Show popup image
+                        const popup = document.getElementById('popup-container');
+                        popup.style.display = 'block';
+                        popup.style.opacity = '1';
+                        popup.style.top = '50%';
+                        popup.style.left = '50%';
+                        setTimeout(() => {
+                            const counter = document.getElementById('points-counter').getBoundingClientRect();
+                            popup.style.top = counter.top + 'px';
+                            popup.style.left = counter.left + 'px';
+                            popup.style.opacity = '0';
+                            popup.addEventListener('transitionend', () => {
+                                popup.style.display = 'none';
+                            }, { once: true });
+                        }, 1000);
+                    } else if (event.code === "KeyB") { // Wrong answer
+                        document.getElementById('result-message').innerText = "No points this time! 😔";
+                    }
+                }
+            }
+        });
+
+        // Logging for image loading validation
+        window.addEventListener('load', () => {
+            const coinImage = document.getElementById('coin-image');
+            coinImage.onload = () => console.log('Coin image loaded successfully');
+            coinImage.onerror = () => console.log('Coin image failed to load');
+
+            const popupImage = document.getElementById('popup-image');
+            popupImage.onload = () => console.log('Popup image loaded successfully');
+            popupImage.onerror = () => console.log('Popup image failed to load');
+        });
+    </script>
+</body>
+</html>
